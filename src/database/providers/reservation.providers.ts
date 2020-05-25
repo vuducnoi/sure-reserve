@@ -7,13 +7,14 @@ import { Reservation } from '../../reservation/interfaces/reservation.interface'
 export const reservationProviders = [
     {
         provide: CONSTANTS.RESERVATION_MODEL,
-        useFactory: (connection: mongoose.Connection) =>  {
-            ReservationSchema.pre<Reservation>('save', function(next) {
+        useFactory: (connection: mongoose.Connection) => {
+            ReservationSchema.pre<Reservation>('save', function (next) {
                 const start_time = this.start_time;
                 this.end_time = moment(start_time).add(3, 'hours').format(CONSTANTS.DATE_FORMAT).toString();
                 this.start_time = moment(start_time).format(CONSTANTS.DATE_FORMAT).toString();
                 next();
             })
+            ReservationSchema.index({ timeSpan: 1, parkingLotId: 1 }, { unique: true })
 
             return connection.model('Reservation', ReservationSchema)
         },

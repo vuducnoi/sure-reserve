@@ -3,13 +3,15 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Reservation } from '../../reservation/interfaces/reservation.interface';
 import { CONSTANTS } from '../../config/constants';
 import { ReservationDto } from '../../reservation/dto/reservation.dto';
+import { UtilsService } from '../../services/utils.service';
 
 @Injectable()
 export class ReservationService {
     constructor(
-        @Inject(CONSTANTS.RESERVATION_MODEL) private reservationModel: Model<Reservation>){}
+        @Inject(CONSTANTS.RESERVATION_MODEL) private reservationModel: Model<Reservation>, private utilsService: UtilsService){}
 
     async create(reservationDto: ReservationDto): Promise<Reservation> {
+        reservationDto.timeSpan = this.utilsService.generateTimeSpan(reservationDto.start_time, reservationDto.end_time)
         const createdItem = new this.reservationModel(reservationDto);
         return createdItem.save();
     }

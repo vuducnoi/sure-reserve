@@ -30,11 +30,11 @@ export class ReservationLocalService {
         const carParkId: string = reservationDto.carParkId;
         const parkingLots: ParkingLot[] = await this.parkingLotService.findWithConditions(new Map().set('carParkId', { $in: [carParkId] }))
         const parkingLotIds: string[] = parkingLots.map((e) => e._id.toString())
-        const reservations: Reservation[] = await this.fetchReservationsFromTimeToTime(startTime, endTime, parkingLotIds)
+        const reservations: any[] = await this.fetchReservationsFromTimeToTime(startTime, endTime, parkingLotIds)
         // Filter all available slot
         let availableSlot: string;
         if (reservations.length > 0) {
-            const availableSlots: string[] = parkingLotIds.filter((slot) => reservations.findIndex((e) => e.parkingLotId === slot) == -1)
+            const availableSlots: string[] = parkingLotIds.filter((slot) => reservations.findIndex((e) => e.parkingLotId._id.toString() === slot) == -1)
             // IF all slot of given car park are fully booking
             if (!availableSlots || availableSlots.length == 0) {
 
@@ -129,12 +129,12 @@ export class ReservationLocalService {
     }
 
     async getAvailableSlotOfTimeRange(start_time: string, end_time: string, parkingLotIds: string[]) {
-        const bookings: Reservation[] = await this.fetchReservationsFromTimeToTime(start_time, end_time, parkingLotIds);
+        const bookings: any[] = await this.fetchReservationsFromTimeToTime(start_time, end_time, parkingLotIds);
         // Found available slot
         if (!bookings || bookings.length == 0) {
             return this.parkingLots[0]  // Get first parking lot in the list
         }
-        const availableSlots: ParkingLot[] = this.parkingLots.filter((slot) => bookings.findIndex((e) => e.parkingLotId === slot._id.toString()) == -1)
+        const availableSlots: ParkingLot[] = this.parkingLots.filter((slot) => bookings.findIndex((e) => e.parkingLotId._id.toString() === slot._id.toString()) == -1)
         if (availableSlots && availableSlots.length > 0) {
             return availableSlots[0];
         }

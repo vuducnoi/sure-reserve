@@ -205,32 +205,9 @@ export class ReservationLocalService {
 
     async findOne(id: string): Promise<any> {
         const reservations: Reservation[] = await this.reservationService.findWithConditions(new Map().set('_id', id));
-        if (!reservations || reservations.length == 0) {
-            return null;
+        if (reservations && reservations.length > 0) {
+            return reservations[0]
         }
-        const reservation: Reservation = reservations[0]
-        // get parking lot
-        const parkingLots: ParkingLot[] = await this.parkingLotService.findWithConditions(new Map().set('_id', reservation.parkingLotId))
-        if (!parkingLots || parkingLots.length == 0) {
-            return {
-                reservation
-            };
-        }
-        const parkingLot: ParkingLot = parkingLots[0];
-        // get car park name
-
-        const carParks: CarPark[] = await this.carparkService.findWithConditions(new Map().set('_id', parkingLot.carParkId))
-        if (!carParks || carParks.length == 0) {
-            return {
-                reservation,
-                parkingLot
-            };
-        }
-
-        return {
-            reservation,
-            parkingLot,
-            carPark: carParks[0]
-        }
+        return null;
     }
 } 

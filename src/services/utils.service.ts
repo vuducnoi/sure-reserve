@@ -12,11 +12,15 @@ export class UtilsService {
 
     public generateTimeSpan(startTime: string, endTime: string): string[] {
         let timeSpan: string[] = []
-        let begin = moment(startTime);
-        while(begin.isSameOrBefore(endTime)) {
+        let begin = moment(startTime).add(1, 'minute');
+        timeSpan.push(begin.format(CONSTANTS.DATE_FORMAT))
+        begin = begin.add(14, 'minutes')
+        while(begin.isBefore(endTime)) {
             timeSpan.push(begin.format(CONSTANTS.DATE_FORMAT))
             begin.add(15, 'minutes');
         }
+        let end = moment(endTime).subtract(1, 'minute');
+        timeSpan.push(end.format(CONSTANTS.DATE_FORMAT))
         return timeSpan;
     }
  }

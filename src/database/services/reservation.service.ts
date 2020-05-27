@@ -41,6 +41,13 @@ export class ReservationService {
         for (const [key, value] of entries) {
             criteria[key] = value
         }
-        return this.reservationModel.find(criteria).exec();
+        return this.reservationModel.find(criteria).populate({
+            path: 'parkingLotId',
+            as: 'parkingLot',
+            populate: {
+                path: 'carParkId',
+                as: 'carPark'
+            }
+        }).exec();
     }
 }
